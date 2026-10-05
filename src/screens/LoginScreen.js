@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { Button, Input, makeStyles, Text } from '@rneui/themed';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -31,37 +31,45 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.accent} />
-      <View style={styles.content}>
-        <View style={styles.mark}>
-          <MaterialCommunityIcons color={colors.blue} name="calendar-star" size={34} />
-        </View>
-        <Text h1 h1Style={styles.title}>MaizeMeet</Text>
-        <Text style={styles.tagline}>There’s more happening here.</Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardArea}
+      >
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.mark}>
+            <MaterialCommunityIcons color={colors.blue} name="calendar-star" size={34} />
+          </View>
+          <Text h1 h1Style={styles.title}>MaizeMeet</Text>
+          <Text style={styles.tagline}>There’s more happening here.</Text>
 
-        <View style={styles.form}>
-          <Input
-            autoCapitalize="none"
-            autoComplete="username"
-            containerStyle={styles.inputContainer}
-            inputContainerStyle={styles.input}
-            label="Campus username"
-            onChangeText={setUsername}
-            value={username}
-          />
-          <Input
-            autoComplete="password"
-            containerStyle={styles.inputContainer}
-            inputContainerStyle={styles.input}
-            label="Password"
-            onChangeText={setPassword}
-            secureTextEntry
-            value={password}
-          />
-          {error ? <Text style={styles.error}>{error}</Text> : null}
-          <Button loading={loading} onPress={handleLogin} title="Sign in" />
-          <Text style={styles.demo}>Demo account credentials are filled in for you.</Text>
-        </View>
-      </View>
+          <View style={styles.form}>
+            <Input
+              autoCapitalize="none"
+              autoComplete="username"
+              containerStyle={styles.inputContainer}
+              inputContainerStyle={styles.input}
+              label="Campus username"
+              onChangeText={setUsername}
+              value={username}
+            />
+            <Input
+              autoComplete="password"
+              containerStyle={styles.inputContainer}
+              inputContainerStyle={styles.input}
+              label="Password"
+              onChangeText={setPassword}
+              secureTextEntry
+              value={password}
+            />
+            {error ? <Text style={styles.error}>{error}</Text> : null}
+            <Button loading={loading} onPress={handleLogin} title="Sign in" />
+            <Text style={styles.demo}>Demo account credentials are filled in for you.</Text>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -69,7 +77,8 @@ export default function LoginScreen({ navigation }) {
 const useStyles = makeStyles((theme) => ({
   safeArea: { backgroundColor: theme.colors.background, flex: 1 },
   accent: { backgroundColor: colors.maize, height: 8, left: 0, position: 'absolute', right: 0, top: 0 },
-  content: { flex: 1, justifyContent: 'center', paddingHorizontal: 28 },
+  keyboardArea: { flex: 1 },
+  content: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: 28, paddingVertical: 24 },
   mark: { alignItems: 'center', backgroundColor: colors.maize, borderRadius: 18, height: 64, justifyContent: 'center', width: 64 },
   title: { color: theme.colors.primary, fontSize: 38, fontWeight: '900', letterSpacing: -1, marginTop: 16 },
   tagline: { color: theme.colors.textMuted, fontSize: 17, marginTop: 3 },
