@@ -10,13 +10,23 @@ export default function NotesScreen({ navigation, route }) {
   const [note, setNote] = useState('');
   const [loaded, setLoaded] = useState(false);
   const timer = useRef(null);
+  const latestNote = useRef('');
+  const loadedRef = useRef(false);
+  const savedBeforeExit = useRef(false);
   const styles = useStyles();
   const { theme } = useTheme();
 
   useEffect(() => {
     getNote(eventId)
-      .then((stored) => setNote(stored?.body || ''))
-      .finally(() => setLoaded(true));
+      .then((stored) => {
+        const storedNote = stored?.body || '';
+        latestNote.current = storedNote;
+        setNote(storedNote);
+      })
+      .finally(() => {
+        loadedRef.current = true;
+        setLoaded(true);
+      });
   }, [eventId]);
 
   useEffect(() => {
@@ -28,6 +38,30 @@ export default function NotesScreen({ navigation, route }) {
     return () => clearTimeout(timer.current);
   }, [note]);
 
+  useEffect(() => () => {
+    clearTimeout(timer.current);
+    if (loadedRef.current && !savedBeforeExit.current) {
+      saveNote(eventId, latestNote.current).catch(() => {});
+    }
+  }, [eventId]);
+
+  function handleNoteChange(value) {
+    latestNote.current = value;
+    savedBeforeExit.current = false;
+    setNote(value);
+  }
+
+  async function handleBack() {
+    clearTimeout(timer.current);
+    if (loadedRef.current) {
+      try {
+        await saveNote(eventId, latestNote.current);
+        savedBeforeExit.current = true;
+      } catch {}
+    }
+    navigation.goBack();
+  }
+
   return (
     <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -35,7 +69,7 @@ export default function NotesScreen({ navigation, route }) {
         style={styles.flex}
       >
         <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Pressable onPress={handleBack} style={styles.backButton}>
             <MaterialCommunityIcons color={theme.colors.primary} name="arrow-left" size={25} />
           </Pressable>
           <Text style={styles.headerTitle}>Private note</Text>
@@ -48,7 +82,7 @@ export default function NotesScreen({ navigation, route }) {
 
           <TextInput
             multiline
-            onChangeText={setNote}
+            onChangeText={handleNoteChange}
             placeholder="What do you want to remember about this event?"
             placeholderTextColor={theme.colors.textMuted}
             style={styles.input}
