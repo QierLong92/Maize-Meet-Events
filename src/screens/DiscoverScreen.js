@@ -27,14 +27,16 @@ export default function DiscoverScreen({ navigation }) {
   const [refreshError, setRefreshError] = useState('');
 
   const filteredEvents = useMemo(() => {
+    const normalizedQuery = query.trim().replace(/\s+/g, ' ').toLowerCase();
     events.sort((left, right) => new Date(left.startsAt) - new Date(right.startsAt));
     return events.filter((event) => {
-      const matchesSearch = !query || event.title.includes(query);
+      const normalizedTitle = event.title.replace(/\s+/g, ' ').toLowerCase();
+      const matchesSearch = !normalizedQuery || normalizedTitle.includes(normalizedQuery);
       const matchesCategory =
         selectedCategory === 'All' || event.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [events, query]);
+  }, [events, query, selectedCategory]);
 
   async function handleRefresh() {
     setRefreshing(true);
