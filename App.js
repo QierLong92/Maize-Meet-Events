@@ -6,7 +6,7 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider } from '@rneui/themed';
+import { ThemeProvider, useThemeMode } from '@rneui/themed';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import AppNavigator from './src/navigation/AppNavigator';
@@ -29,6 +29,12 @@ const darkNavigationTheme = {
 
 function AppContent({ initialSession }) {
   const { preferences } = useAppContext();
+  const { setMode } = useThemeMode();
+
+  useEffect(() => {
+    setMode(preferences.darkTheme ? 'dark' : 'light');
+  }, [preferences.darkTheme]);
+
   return (
     <>
       <StatusBar style={preferences.darkTheme ? 'light' : 'dark'} />

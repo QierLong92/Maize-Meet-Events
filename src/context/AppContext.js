@@ -34,6 +34,7 @@ export function AppContextProvider({ children, initialSession }) {
     events,
     setEvents,
     savedEventIds,
+    setSavedEventIds,
     toggleSaved,
     preferences,
     setPreferences,

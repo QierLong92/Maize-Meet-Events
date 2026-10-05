@@ -6,7 +6,7 @@ export async function getPreferences() {
   const storedTheme = await AsyncStorage.getItem(DARK_KEY);
 
   return {
-    darkTheme: storedTheme === null ? false : Boolean(storedTheme),
+    darkTheme: storedTheme === 'true',
   };
 }
 
@@ -15,5 +15,5 @@ export function setDarkTheme(value) {
 }
 
 export function resetPreferences() {
-  return AsyncStorage.clear();
+  return AsyncStorage.removeItem(DARK_KEY);
 }

@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Text } from '@rneui/themed';
+import { View } from 'react-native';
+import { makeStyles, Text } from '@rneui/themed';
 
 export default function CapacityBadge({ capacity, registeredCount = 0 }) {
+  const styles = useStyles();
   const label = capacity === null ? 'Drop-in event' : `${registeredCount} / ${capacity}`;
 
   return (
@@ -12,13 +13,13 @@ export default function CapacityBadge({ capacity, registeredCount = 0 }) {
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((theme) => ({
   badge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E4ECF5',
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  label: { color: '#23313D', fontSize: 12, fontWeight: '700' },
-});
+  label: { color: theme.colors.text, fontSize: 12, fontWeight: '700' },
+}));
