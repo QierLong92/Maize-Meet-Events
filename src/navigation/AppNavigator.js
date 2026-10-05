@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useTheme } from '@rneui/themed';
 import DiscoverScreen from '../screens/DiscoverScreen';
 import EventDetailsScreen from '../screens/EventDetailsScreen';
 import LoginScreen from '../screens/LoginScreen';
@@ -9,7 +10,6 @@ import NotesScreen from '../screens/NotesScreen';
 import SavedScreen from '../screens/SavedScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 import { useAppContext } from '../context/AppContext';
-import { colors } from '../theme/theme';
 
 const RootStack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -22,16 +22,23 @@ const icons = {
 
 function MainTabs() {
   const { savedEventIds } = useAppContext();
+  const { theme } = useTheme();
   const [savedCount] = useState(savedEventIds.length);
 
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: colors.blue,
-        tabBarInactiveTintColor: '#77838E',
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
-        tabBarStyle: { borderTopColor: '#E2E6EA', height: 82, paddingBottom: 22, paddingTop: 8 },
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.outline,
+          height: 82,
+          paddingBottom: 22,
+          paddingTop: 8,
+        },
         tabBarIcon: ({ color, focused, size }) => (
           <MaterialCommunityIcons
             color={color}

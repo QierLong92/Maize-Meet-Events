@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Card, Text } from '@rneui/themed';
+import { Pressable, View } from 'react-native';
+import { Card, makeStyles, Text, useTheme } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { formatEventDate, formatEventTime } from '../utils/date';
-import { colors } from '../theme/theme';
 
 export default function EventCard({ event, initiallySaved, onPress, onToggleSaved }) {
   const [saved, setSaved] = useState(initiallySaved);
+  const styles = useStyles();
+  const { theme } = useTheme();
 
   async function handleSavedPress() {
     setSaved((current) => !current);
@@ -21,7 +22,7 @@ export default function EventCard({ event, initiallySaved, onPress, onToggleSave
           <Text style={styles.category}>{event.category.toUpperCase()}</Text>
           <Pressable hitSlop={4} onPress={handleSavedPress} style={styles.heartButton}>
             <MaterialCommunityIcons
-              color={saved ? '#C6253D' : colors.muted}
+              color={saved ? '#C6253D' : theme.colors.textMuted}
               name={saved ? 'heart' : 'heart-outline'}
               size={22}
             />
@@ -39,9 +40,9 @@ export default function EventCard({ event, initiallySaved, onPress, onToggleSave
   );
 }
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles((theme) => ({
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: theme.colors.surface,
     elevation: 1,
     height: 174,
     padding: 18,
@@ -51,9 +52,9 @@ const styles = StyleSheet.create({
   },
   pressed: { opacity: 0.78 },
   topRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-  category: { color: colors.blueLight, fontSize: 11, fontWeight: '800', letterSpacing: 1.2 },
+  category: { color: theme.colors.textAccent, fontSize: 11, fontWeight: '800', letterSpacing: 1.2 },
   heartButton: { alignItems: 'center', height: 28, justifyContent: 'center', width: 28 },
-  title: { color: colors.ink, fontSize: 20, fontWeight: '800', marginTop: 2 },
-  date: { color: colors.blue, fontSize: 14, fontWeight: '700', marginTop: 8 },
-  meta: { color: colors.muted, fontSize: 13, marginTop: 3 },
-});
+  title: { color: theme.colors.text, fontSize: 20, fontWeight: '800', marginTop: 2 },
+  date: { color: theme.colors.primary, fontSize: 14, fontWeight: '700', marginTop: 8 },
+  meta: { color: theme.colors.textMuted, fontSize: 13, marginTop: 3 },
+}));

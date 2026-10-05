@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, Chip, Text } from '@rneui/themed';
+import { Button, Chip, makeStyles, Text, useTheme } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import CapacityBadge from '../components/CapacityBadge';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useAppContext } from '../context/AppContext';
 import { getEvent, isRegistered, registerForEvent } from '../db/database';
 import { formatFullEventDate } from '../utils/date';
-import { colors } from '../theme/theme';
 
 export default function EventDetailsScreen({ navigation, route }) {
   const { events, savedEventIds, toggleSaved } = useAppContext();
@@ -17,6 +16,8 @@ export default function EventDetailsScreen({ navigation, route }) {
   const [registered, setRegistered] = useState(false);
   const [registering, setRegistering] = useState(false);
   const [saved, setSaved] = useState(false);
+  const styles = useStyles();
+  const { theme } = useTheme();
 
   useEffect(() => {
     async function loadEvent() {
@@ -74,11 +75,11 @@ export default function EventDetailsScreen({ navigation, route }) {
           }
           style={styles.navButton}
         >
-          <MaterialCommunityIcons color={colors.blue} name="arrow-left" size={25} />
+          <MaterialCommunityIcons color={theme.colors.primary} name="arrow-left" size={25} />
         </Pressable>
         <Pressable onPress={handleSave} style={styles.navButton}>
           <MaterialCommunityIcons
-            color={saved ? '#C6253D' : colors.blue}
+            color={saved ? '#C6253D' : theme.colors.primary}
             name={saved ? 'heart' : 'heart-outline'}
             size={25}
           />
@@ -91,7 +92,7 @@ export default function EventDetailsScreen({ navigation, route }) {
         <Text style={styles.date}>{formatFullEventDate(event.startsAt, event.endsAt)}</Text>
 
         <View style={styles.locationRow}>
-          <MaterialCommunityIcons color={colors.blueLight} name="map-marker-outline" size={22} />
+          <MaterialCommunityIcons color={theme.colors.textAccent} name="map-marker-outline" size={22} />
           <View style={styles.locationText}>
             <Text style={styles.location}>{event.location}</Text>
             {event.room ? <Text style={styles.room}>{event.room}</Text> : null}
@@ -127,13 +128,13 @@ export default function EventDetailsScreen({ navigation, route }) {
           style={styles.noteCard}
         >
           <View style={styles.noteIcon}>
-            <MaterialCommunityIcons color={colors.blue} name="notebook-edit-outline" size={24} />
+            <MaterialCommunityIcons color={theme.colors.primary} name="notebook-edit-outline" size={24} />
           </View>
           <View style={styles.noteCopy}>
             <Text style={styles.noteTitle}>Private note</Text>
             <Text style={styles.noteDescription}>Add a reminder or thought about this event.</Text>
           </View>
-          <MaterialCommunityIcons color={colors.muted} name="chevron-right" size={24} />
+          <MaterialCommunityIcons color={theme.colors.textMuted} name="chevron-right" size={24} />
         </Pressable>
       </ScrollView>
 
@@ -153,31 +154,31 @@ export default function EventDetailsScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: { backgroundColor: '#FFFFFF', flex: 1 },
-  center: { alignItems: 'center', flex: 1, justifyContent: 'center' },
+const useStyles = makeStyles((theme) => ({
+  safeArea: { backgroundColor: theme.colors.surface, flex: 1 },
+  center: { alignItems: 'center', backgroundColor: theme.colors.background, flex: 1, justifyContent: 'center' },
   navBar: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 12, paddingVertical: 4 },
   navButton: { alignItems: 'center', height: 38, justifyContent: 'center', width: 38 },
   content: { paddingBottom: 28, paddingHorizontal: 22 },
-  category: { color: colors.blueLight, fontSize: 12, fontWeight: '800', letterSpacing: 1.3, marginTop: 14 },
-  title: { color: colors.blue, fontSize: 34, fontWeight: '900', letterSpacing: -0.8, lineHeight: 39, marginTop: 7 },
-  date: { color: colors.blueLight, fontSize: 16, fontWeight: '700', marginTop: 14 },
+  category: { color: theme.colors.textAccent, fontSize: 12, fontWeight: '800', letterSpacing: 1.3, marginTop: 14 },
+  title: { color: theme.colors.primary, fontSize: 34, fontWeight: '900', letterSpacing: -0.8, lineHeight: 39, marginTop: 7 },
+  date: { color: theme.colors.textAccent, fontSize: 16, fontWeight: '700', marginTop: 14 },
   locationRow: { alignItems: 'flex-start', flexDirection: 'row', marginTop: 18 },
   locationText: { marginLeft: 8 },
-  location: { color: colors.ink, fontSize: 15, fontWeight: '700' },
-  room: { color: colors.muted, marginTop: 2 },
+  location: { color: theme.colors.text, fontSize: 15, fontWeight: '700' },
+  room: { color: theme.colors.textMuted, marginTop: 2 },
   capacityRow: { alignItems: 'center', flexDirection: 'row', gap: 10, marginTop: 18 },
-  capacityText: { color: colors.muted, fontSize: 13 },
-  rule: { backgroundColor: colors.border, height: 1, marginVertical: 24 },
-  sectionTitle: { color: colors.ink, fontSize: 18, fontWeight: '800' },
-  description: { color: '#3E4A55', fontSize: 16, lineHeight: 25, marginTop: 9 },
+  capacityText: { color: theme.colors.textMuted, fontSize: 13 },
+  rule: { backgroundColor: theme.colors.outline, height: 1, marginVertical: 24 },
+  sectionTitle: { color: theme.colors.text, fontSize: 18, fontWeight: '800' },
+  description: { color: theme.colors.text, fontSize: 16, lineHeight: 25, marginTop: 9 },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 17 },
-  tag: { borderColor: colors.border, borderRadius: 999 },
-  tagText: { color: colors.blueLight, fontSize: 12 },
-  noteCard: { alignItems: 'center', backgroundColor: colors.cream, borderRadius: 14, flexDirection: 'row', marginTop: 26, padding: 15 },
-  noteIcon: { alignItems: 'center', backgroundColor: '#E5EDF4', borderRadius: 10, height: 42, justifyContent: 'center', width: 42 },
+  tag: { borderColor: theme.colors.outline, borderRadius: 999 },
+  tagText: { color: theme.colors.textAccent, fontSize: 12 },
+  noteCard: { alignItems: 'center', backgroundColor: theme.colors.background, borderRadius: 14, flexDirection: 'row', marginTop: 26, padding: 15 },
+  noteIcon: { alignItems: 'center', backgroundColor: theme.colors.surfaceMuted, borderRadius: 10, height: 42, justifyContent: 'center', width: 42 },
   noteCopy: { flex: 1, marginHorizontal: 12 },
-  noteTitle: { color: colors.ink, fontSize: 15, fontWeight: '800' },
-  noteDescription: { color: colors.muted, fontSize: 12, marginTop: 2 },
-  footer: { borderTopColor: colors.border, borderTopWidth: 1, paddingHorizontal: 20, paddingTop: 14 },
-});
+  noteTitle: { color: theme.colors.text, fontSize: 15, fontWeight: '800' },
+  noteDescription: { color: theme.colors.textMuted, fontSize: 12, marginTop: 2 },
+  footer: { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.outline, borderTopWidth: 1, paddingHorizontal: 20, paddingTop: 14 },
+}));

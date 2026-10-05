@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text } from '@rneui/themed';
+import { makeStyles, Text } from '@rneui/themed';
 import EventCard from '../components/EventCard';
 import EmptyState from '../components/EmptyState';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { getSavedEvents } from '../db/database';
 import { useAppContext } from '../context/AppContext';
-import { colors } from '../theme/theme';
 
 export default function SavedScreen({ navigation }) {
   const { savedEventIds, toggleSaved } = useAppContext();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const styles = useStyles();
 
   useEffect(() => {
     getSavedEvents()
@@ -58,12 +58,12 @@ export default function SavedScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: { backgroundColor: colors.cream, flex: 1 },
+const useStyles = makeStyles((theme) => ({
+  safeArea: { backgroundColor: theme.colors.background, flex: 1 },
   header: { paddingHorizontal: 20, paddingTop: 16 },
-  heading: { color: colors.blue, fontSize: 30, fontWeight: '900', letterSpacing: -0.5 },
-  subheading: { color: colors.muted, marginTop: 3 },
+  heading: { color: theme.colors.primary, fontSize: 30, fontWeight: '900', letterSpacing: -0.5 },
+  subheading: { color: theme.colors.textMuted, marginTop: 3 },
   list: { paddingBottom: 28, paddingHorizontal: 20, paddingTop: 18 },
   emptyList: { flexGrow: 1 },
   separator: { height: 12 },
-});
+}));

@@ -3,19 +3,17 @@ import {
   FlatList,
   Pressable,
   RefreshControl,
-  StyleSheet,
   Text as NativeText,
   TextInput,
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text } from '@rneui/themed';
+import { makeStyles, Text, useTheme } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import EventCard from '../components/EventCard';
 import EmptyState from '../components/EmptyState';
 import { useAppContext } from '../context/AppContext';
 import { refreshEvents } from '../services/eventService';
-import { colors } from '../theme/theme';
 
 const categories = ['All', 'Academic', 'Arts', 'Career', 'Community', 'Workshop'];
 
@@ -25,6 +23,8 @@ export default function DiscoverScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [refreshing, setRefreshing] = useState(false);
   const [refreshError, setRefreshError] = useState('');
+  const styles = useStyles();
+  const { theme } = useTheme();
 
   const filteredEvents = useMemo(() => {
     events.sort((left, right) => new Date(left.startsAt) - new Date(right.startsAt));
@@ -63,11 +63,11 @@ export default function DiscoverScreen({ navigation }) {
       </View>
 
       <View style={styles.searchBox}>
-        <MaterialCommunityIcons color={colors.muted} name="magnify" size={21} />
+        <MaterialCommunityIcons color={theme.colors.textMuted} name="magnify" size={21} />
         <TextInput
           onChangeText={setQuery}
           placeholder="Search events"
-          placeholderTextColor="#7B858E"
+          placeholderTextColor={theme.colors.textMuted}
           returnKeyType="search"
           style={styles.searchInput}
           value={query}
@@ -108,7 +108,14 @@ export default function DiscoverScreen({ navigation }) {
             title="No events found"
           />
         }
-        refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={refreshing} />}
+        refreshControl={
+          <RefreshControl
+            colors={[theme.colors.primary]}
+            onRefresh={handleRefresh}
+            refreshing={refreshing}
+            tintColor={theme.colors.primary}
+          />
+        }
         renderItem={({ item, index }) => (
           <EventCard
             event={item}
@@ -127,16 +134,16 @@ export default function DiscoverScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: { backgroundColor: colors.cream, flex: 1 },
+const useStyles = makeStyles((theme) => ({
+  safeArea: { backgroundColor: theme.colors.background, flex: 1 },
   header: { paddingHorizontal: 20, paddingTop: 12 },
-  eyebrow: { color: colors.blueLight, fontSize: 11, fontWeight: '800', letterSpacing: 1.4 },
-  heading: { color: colors.blue, fontSize: 31, fontWeight: '900', letterSpacing: -0.7, marginTop: 4 },
-  subheading: { color: colors.muted, fontSize: 15, marginTop: 3 },
+  eyebrow: { color: theme.colors.textAccent, fontSize: 11, fontWeight: '800', letterSpacing: 1.4 },
+  heading: { color: theme.colors.primary, fontSize: 31, fontWeight: '900', letterSpacing: -0.7, marginTop: 4 },
+  subheading: { color: theme.colors.textMuted, fontSize: 15, marginTop: 3 },
   searchBox: {
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderColor: colors.border,
+    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.outline,
     borderRadius: 13,
     borderWidth: 1,
     flexDirection: 'row',
@@ -144,7 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     paddingHorizontal: 13,
   },
-  searchInput: { color: colors.ink, flex: 1, fontSize: 16, height: 48, marginLeft: 8 },
+  searchInput: { color: theme.colors.text, flex: 1, fontSize: 16, height: 48, marginLeft: 8 },
   categories: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -155,7 +162,7 @@ const styles = StyleSheet.create({
   chip: {
     alignItems: 'center',
     backgroundColor: 'transparent',
-    borderColor: '#AAB4BE',
+    borderColor: theme.colors.textMuted,
     borderRadius: 999,
     borderWidth: 1,
     justifyContent: 'center',
@@ -163,11 +170,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
-  selectedChip: { backgroundColor: colors.blue, borderColor: colors.blue },
-  chipText: { color: colors.blue, fontSize: 13, fontWeight: '700' },
-  selectedChipText: { color: '#FFFFFF' },
-  refreshError: { color: colors.danger, marginHorizontal: 20, marginBottom: 8 },
+  selectedChip: { backgroundColor: theme.colors.primary, borderColor: theme.colors.primary },
+  chipText: { color: theme.colors.primary, fontSize: 13, fontWeight: '700' },
+  selectedChipText: { color: theme.mode === 'dark' ? '#101820' : '#FFFFFF' },
+  refreshError: { color: theme.colors.danger, marginHorizontal: 20, marginBottom: 8 },
   list: { paddingBottom: 28, paddingHorizontal: 20 },
   emptyList: { flexGrow: 1 },
   separator: { height: 12 },
-});
+}));
