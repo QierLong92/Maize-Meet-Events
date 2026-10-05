@@ -1,4 +1,4 @@
-# MaizeMeet
+# MaizeMeet yclmir branch
 
 MaizeMeet is a partially completed campus-events application used for a React Native maintenance assignment. It uses Expo SDK 57, React Navigation, RNEUI, SQLite, AsyncStorage, and SecureStore.
 
