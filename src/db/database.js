@@ -135,6 +135,37 @@ export async function getSavedEventIds() {
   }
 }
 
+export async function resetUserData() {
+  const db = await getDatabase();
+  await db.withTransactionAsync(async () => {
+    await db.execAsync(`
+      DELETE FROM saved_events;
+      DELETE FROM notes;
+      DELETE FROM registrations;
+      DELETE FROM events;
+    `);
+
+    for (const event of seedEvents) {
+      await db.runAsync(
+        `INSERT INTO events
+          (id, title, description, startsAt, endsAt, category, location, room, capacity, registeredCount, tags)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        event.id,
+        event.title,
+        event.description,
+        event.startsAt,
+        event.endsAt,
+        event.category,
+        event.location,
+        event.room,
+        event.capacity,
+        event.registeredCount,
+        event.tags ? JSON.stringify(event.tags) : null
+      );
+    }
+  });
+}
+
 export async function toggleSavedEvent(eventId) {
   const db = await getDatabase();
   const saved = await db.getFirstAsync(

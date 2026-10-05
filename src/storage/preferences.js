@@ -15,5 +15,5 @@ export function setDarkTheme(value) {
 }
 
 export function resetPreferences() {
-  return AsyncStorage.clear();
+  return AsyncStorage.removeItem(DARK_KEY);
 }

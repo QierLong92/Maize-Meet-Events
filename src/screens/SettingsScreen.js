@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Button, ListItem, makeStyles, Switch, Text, useTheme } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppContext } from '../context/AppContext';
+import { getEvents, resetUserData } from '../db/database';
 import { clearSession } from '../services/session';
 import { resetPreferences, setDarkTheme } from '../storage/preferences';
 import { colors } from '../theme/theme';
@@ -27,7 +28,14 @@ function SettingRow({ icon, title, description, value, onChange }) {
 }
 
 export default function SettingsScreen({ navigation }) {
-  const { preferences, setPreferences, session, setSession } = useAppContext();
+  const {
+    preferences,
+    setEvents,
+    setPreferences,
+    session,
+    setSavedEventIds,
+    setSession,
+  } = useAppContext();
   const [message, setMessage] = useState('');
   const styles = useStyles();
 
@@ -39,15 +47,17 @@ export default function SettingsScreen({ navigation }) {
   function handleReset() {
     Alert.alert(
       'Reset app data?',
-      'This will clear your local MaizeMeet data and sign you out.',
+      'This will clear your local MaizeMeet data.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Reset',
           style: 'destructive',
           onPress: async () => {
-            await resetPreferences();
+            await Promise.all([resetPreferences(), resetUserData()]);
+            setEvents(await getEvents());
             setPreferences({ darkTheme: false });
+            setSavedEventIds([]);
             setMessage('App data reset.');
           },
         },
