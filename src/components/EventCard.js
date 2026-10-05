@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { Card, makeStyles, Text, useTheme } from '@rneui/themed';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,6 +8,10 @@ export default function EventCard({ event, initiallySaved, onPress, onToggleSave
   const [saved, setSaved] = useState(initiallySaved);
   const styles = useStyles();
   const { theme } = useTheme();
+
+  useEffect(() => {
+    setSaved(initiallySaved);
+  }, [initiallySaved]);
 
   async function handleSavedPress() {
     setSaved((current) => !current);

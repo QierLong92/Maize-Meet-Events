@@ -15,10 +15,25 @@ export default function SavedScreen({ navigation }) {
   const styles = useStyles();
 
   useEffect(() => {
+    let active = true;
+    setLoading(true);
+
     getSavedEvents()
-      .then(setEvents)
-      .finally(() => setLoading(false));
-  }, []);
+      .then((nextEvents) => {
+        if (active) {
+          setEvents(nextEvents);
+        }
+      })
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [savedEventIds]);
 
   const displayedEvents = events.sort(
     (left, right) => new Date(left.startsAt) - new Date(right.startsAt)
