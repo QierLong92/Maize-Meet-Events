@@ -55,6 +55,17 @@ export async function initializeDatabase() {
     );
   `);
 
+  await db.execAsync(`
+    DELETE FROM saved_events
+    WHERE rowId NOT IN (
+      SELECT MIN(rowId)
+      FROM saved_events
+      GROUP BY eventId
+    );
+    CREATE UNIQUE INDEX IF NOT EXISTS saved_events_event_id_unique
+    ON saved_events (eventId);
+  `);
+
   await db.execAsync('DELETE FROM events');
 
   for (const event of seedEvents) {
@@ -136,7 +147,7 @@ export async function toggleSavedEvent(eventId) {
     return false;
   }
 
-  await db.runAsync('INSERT INTO saved_events (eventId) VALUES (?)', eventId);
+  await db.runAsync('INSERT OR IGNORE INTO saved_events (eventId) VALUES (?)', eventId);
   return true;
 }
 
