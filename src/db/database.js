@@ -55,6 +55,8 @@ export async function initializeDatabase() {
     );
   `);
 
+  await db.execAsync('DELETE FROM events');
+
   for (const event of seedEvents) {
     await db.runAsync(
       `INSERT INTO events
