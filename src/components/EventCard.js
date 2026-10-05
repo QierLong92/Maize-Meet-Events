@@ -28,7 +28,7 @@ export default function EventCard({ event, initiallySaved, onPress, onToggleSave
             />
           </Pressable>
         </View>
-        <Text h4 h4Style={styles.title} numberOfLines={1}>
+        <Text h4 h4Style={styles.title}>
           {event.title}
         </Text>
         <Text style={styles.date}>{formatEventDate(event.startsAt)}</Text>
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     backgroundColor: theme.colors.surface,
     elevation: 1,
-    height: 174,
+    minHeight: 174,
     padding: 18,
     shadowColor: '#102B44',
     shadowOpacity: 0.08,
